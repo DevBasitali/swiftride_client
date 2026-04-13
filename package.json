@@ -19,6 +19,7 @@
     "sweetalert2": "^11.26.4",
     "web-vitals": "^2.1.4"
   },
+  "build": "CI=false react-scripts build",
   "devDependencies": {
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
