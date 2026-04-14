@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { bookingService } from '../../services/bookingService';
 // 1. Update imports: We don't need 'redirectToPaymentGateway' anymore
 import { paymentService } from '../../services/paymentService';
+import apiClient from '../../services/apiClient';
 import reviewService from '../../services/reviewService';
 import { showAlert } from '../../utils/alert';
 import QRCode from "react-qr-code";
@@ -21,6 +22,7 @@ const MyBookings = () => {
   const [showQRModal, setShowQRModal] = useState(false);
   const [qrCodeValue, setQrCodeValue] = useState(null);
   const [qrBookingInfo, setQrBookingInfo] = useState(null);
+  const [lateFeeLoading, setLateFeeLoading] = useState(null); // bookingId of in-flight request
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,6 +104,25 @@ const MyBookings = () => {
     }
   };
 
+  const handlePayLateFee = async (bookingId) => {
+    setLateFeeLoading(bookingId);
+    try {
+      const res = await apiClient.post(`/payments/booking/${bookingId}/late-fee/safepay/init`);
+      const { url } = res.data.data || res.data;
+      if (url) {
+        // Flag so PaymentReturn can show the correct message after redirect back
+        sessionStorage.setItem('lateFeePayment', 'true');
+        window.location.href = url;
+      } else {
+        showAlert('Error', 'Invalid payment URL received', 'error');
+      }
+    } catch (err) {
+      showAlert('Error', err?.message || 'Could not initialize late fee payment', 'error');
+    } finally {
+      setLateFeeLoading(null);
+    }
+  };
+
   // Invoice Modal State
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [invoiceUrl, setInvoiceUrl] = useState(null);
@@ -147,9 +168,21 @@ const MyBookings = () => {
 
   if (loading) return <div className="p-10 text-center">Loading bookings...</div>;
 
+  const hasOverdueTrip = bookings.some(b => {
+    const isActive = b.status === 'ongoing' || b.status === 'confirmed';
+    return isActive && new Date() > new Date(b.endDateTime);
+  });
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-bold mb-8">My Bookings</h1>
+
+      {hasOverdueTrip && (
+        <div className="flex items-center gap-3 bg-red-600 text-white text-sm font-semibold px-5 py-3 rounded-xl mb-6 w-full">
+          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+          <span>WARNING: Your trip is overdue! Late fees are accumulating.</span>
+        </div>
+      )}
 
       {(!bookings || bookings.length === 0) ? (
         <div className="text-center py-20 bg-white rounded-xl shadow-sm border border-dashed">
@@ -193,6 +226,16 @@ const MyBookings = () => {
 
               {/* Actions */}
               <div className="flex gap-3 w-full md:w-auto flex-wrap justify-end">
+                {/* Late Fee Button */}
+                {booking.lateFeeAmount > 0 && !booking.isLateFeePaid && (
+                  <button
+                    onClick={() => handlePayLateFee(booking.id)}
+                    disabled={lateFeeLoading === booking.id}
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition shadow-sm whitespace-nowrap disabled:opacity-60"
+                  >
+                    {lateFeeLoading === booking.id ? 'Processing...' : `Pay Late Fee — PKR ${booking.lateFeeAmount}`}
+                  </button>
+                )}
                 {/* QR Code Button (Confirmed/Ongoing) */}
                 {(booking.status === 'confirmed' || booking.status === 'ongoing') && (
                     <button
