@@ -19,6 +19,7 @@ const Signup = () => {
   const { googleLogin } = useAuth();
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [tempGoogleCreds, setTempGoogleCreds] = useState(null);
+  const [tempGoogleAccessToken, setTempGoogleAccessToken] = useState(null);
 
   const handleFirebaseGoogleLogin = async () => {
     try {
@@ -42,6 +43,7 @@ const Signup = () => {
         // 2. If backend says "Role required" (status 400), show modal
         if (loginResult.status === 400) {
            setTempGoogleCreds(googleIdToken);
+           setTempGoogleAccessToken(accessToken);
            setShowRoleModal(true);
         } else {
           showAlert('Google Signup Failed', loginResult.message, 'error');
@@ -55,10 +57,11 @@ const Signup = () => {
 
   const handleRoleSelect = async (selectedRole, showroomName) => {
     // 3. Retry login WITH role
-    const result = await googleLogin({ 
-      idToken: tempGoogleCreds, 
-      role: selectedRole, 
-      showroomName 
+    const result = await googleLogin({
+      idToken: tempGoogleCreds,
+      accessToken: tempGoogleAccessToken,
+      role: selectedRole,
+      showroomName
     });
 
     if (result.success) {

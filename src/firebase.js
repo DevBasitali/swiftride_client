@@ -4,12 +4,12 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDSHp792qk4m1l38zlXIDLHTdEEr6aa2to",
-  authDomain: "swift-ride-4f080.firebaseapp.com",
-  projectId: "swift-ride-4f080",
-  storageBucket: "swift-ride-4f080.firebasestorage.app",
-  messagingSenderId: "400619671340",
-  appId: "1:400619671340:web:7f7b792a46b9bdab43a689"
+  apiKey: "AIzaSyDPjYISCeGi0cI_zGNzEssdDkIWWvRehac",
+  authDomain: "swiftride-bb457.firebaseapp.com",
+  projectId: "swiftride-bb457",
+  storageBucket: "swiftride-bb457.firebasestorage.app",
+  messagingSenderId: "64519527429",
+  appId: "1:64519527429:web:bdbb849ca82e673260d06c"
 };
 
 // Initialize Firebase
