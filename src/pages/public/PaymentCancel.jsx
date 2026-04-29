@@ -18,7 +18,7 @@ const PaymentCancel = () => {
         </p>
 
         <Link 
-          to="/bookings" 
+          to="/dashboard/bookings" 
           className="block w-full bg-gray-600 text-white font-semibold py-2 px-4 rounded hover:bg-gray-700 transition"
         >
           Return to Bookings
