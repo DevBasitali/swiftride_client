@@ -23,6 +23,7 @@ import TrackBookingPage from './pages/common/TrackBookingPage';
 
 // Dashboard Pages
 import CustomerOverview from './pages/customer/CustomerOverview'; // NEW
+import ShowroomDashboard from './pages/showroom/ShowroomDashboard';
 import HostDashboard from './pages/host/HostDashboard';
 import MyBookings from './pages/customer/MyBookings';
 import UserProfile from './pages/customer/UserProfile'; // Rename file or import as UserProfile
@@ -133,7 +134,10 @@ function App() {
 // import useAuth from './hooks/useAuth';
 const CustomerOverviewWrapper = () => {
   const { user } = useAuth();
-  if (user.role === 'host' || user.role === 'showroom') {
+  if (user.role === 'showroom') {
+    return <ShowroomDashboard />;
+  }
+  if (user.role === 'host') {
     return <HostDashboard />;
   }
   return <CustomerOverview />;

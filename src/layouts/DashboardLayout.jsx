@@ -70,7 +70,7 @@ const DashboardLayout = () => {
             )}
 
             {/* HOST / SHOWROOM LINKS */}
-            {(user.role === 'host' || user.role === 'showroom') && (
+            {user.role === 'host' && (
               <>
                 <SidebarLink to="/dashboard/fleet" icon={<Car className="w-5 h-5"/>} label="My Fleet" />
                 <SidebarLink to="/dashboard/requests" icon={<Calendar className="w-5 h-5"/>} label="Booking Requests" />
@@ -79,6 +79,19 @@ const DashboardLayout = () => {
                 <div className="mt-8 mb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Actions</div>
                 <Link to="/host/add-car" className="flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 transition font-bold">
                   <Plus className="w-5 h-5" /> Add New Car
+                </Link>
+              </>
+            )}
+
+            {user.role === 'showroom' && (
+              <>
+                <SidebarLink to="/dashboard/fleet" icon={<Car className="w-5 h-5"/>} label="Inventory" />
+                <SidebarLink to="/dashboard/requests" icon={<Calendar className="w-5 h-5"/>} label="Rental Requests" />
+                <SidebarLink to="/dashboard/wallet" icon={<CreditCard className="w-5 h-5"/>} label="Business Wallet" />
+                
+                <div className="mt-8 mb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Actions</div>
+                <Link to="/host/add-car" className="flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 transition font-bold">
+                  <Plus className="w-5 h-5" /> Add to Inventory
                 </Link>
               </>
             )}
@@ -95,7 +108,7 @@ const DashboardLayout = () => {
                 )}
               </div>
               <div className="overflow-hidden">
-                <p className="text-sm font-bold text-gray-900 truncate">{user.fullName || user.showroomName}</p>
+                <p className="text-sm font-bold text-gray-900 truncate">{user.role === 'showroom' ? (user.showroomName || user.fullName) : user.fullName}</p>
                 <p className="text-xs text-gray-500 capitalize">{user.role}</p>
               </div>
             </div>
